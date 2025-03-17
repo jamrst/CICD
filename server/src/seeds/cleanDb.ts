@@ -1,19 +1,32 @@
-import models from '../models/index.js';
-import db from '../config/connection.js';
+import { Question } from '../models/index.js';
 
-export default async (modelName: "Question", collectionName: string) => {
+const cleanDB = async (): Promise<void> => {
   try {
-    if (!models[modelName] || !models[modelName].db) {
-      throw new Error(`Model or database not found for modelName: ${modelName}`);
-    }
-    let modelExists = await models[modelName].db.db.listCollections({
-      name: collectionName
-    }).toArray();
+    await Question.deleteMany({});
+    console.log('Question collection cleaned.');
 
-    if (modelExists.length) {
-      await db.dropCollection(collectionName);
-    }
   } catch (err) {
-    throw err;
+    console.error('Error cleaning collections:', err);
+    process.exit(1);
   }
-}
+};
+
+export default cleanDB;
+
+
+// import models from '../models/index.js';
+// import db from '../config/connection.js';
+
+// export default async (modelName: "Question", collectionName: string) => {
+//   try {
+//     let modelExists = await models[modelName].db.db.listCollections({
+//       name: collectionName
+//     }).toArray()
+
+//     if (modelExists.length) {
+//       await db.dropCollection(collectionName);
+//     }
+//   } catch (err) {
+//     throw err;
+//   }
+// }
